@@ -1,5 +1,6 @@
 package ru.steeldeezer.service;
 import ru.steeldeezer.exception.UserNotFoundException;
+import ru.steeldeezer.repository.TaskRepository;
 import ru.steeldeezer.repository.UserRepository;
 import ru.steeldeezer.model.*;
 
@@ -23,7 +24,10 @@ public class TaskService {
         return taskMap.compute(UUID.randomUUID(),(id, existingTask) ->{
             User user = userMap.get(userId);
             if(user == null) throw  new UserNotFoundException("Пользователь не найден");
-            return new Task(user, title, description);
+            Task task = new Task(user,title,description);
+            TaskRepository taskRepository = new TaskRepository();
+            taskRepository.save(task);
+            return task;
         });
     }
 }

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class TaskRepository {
     public void save(Task task){
-        String sql ="INSERT INTO tasks (id, title, description, status, userId) VALUES(?, ?, ?, ?, ?)";
+        String sql ="INSERT INTO tasks (id, title, description, status, user_id) VALUES(?, ?, ?, ?, ?)";
         try(Connection conn = DatabaseManager.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
             pstmt.setObject(1,task.getId());
