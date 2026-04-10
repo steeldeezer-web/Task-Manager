@@ -1,5 +1,6 @@
 package ru.steeldeezer.service;
 import ru.steeldeezer.exception.UserNotFoundException;
+import ru.steeldeezer.repository.UserRepository;
 import ru.steeldeezer.model.*;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -13,6 +14,8 @@ public class TaskService {
     public User createUser(String name){
         User user = new User(name);
         userMap.put(user.getUuid(), user);
+        UserRepository userRepository = new UserRepository();
+        userRepository.save(user);
         return user;
     }
     //потокобезопасное создание таска
