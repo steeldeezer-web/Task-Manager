@@ -28,21 +28,22 @@ public class TaskRepository {
             throw new RuntimeException("Ошибка сохранения таска в БД", e);
         }
     }
-    public List<Task> findByUserId(User user){
+    public List<Task> findByUserId(UUID userId){
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE user_id = ?";
 
         try(Connection conn = DatabaseManager.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)){
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setObject(1,userId);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()){
                 UUID id = (UUID) rs.getObject("id");
                 String title = rs.getString("title");
                 String description = rs.getString("description");
-                Status status = (Status) rs.getObject("status");
-                UUID userId = (UUID) rs.getObject("user_id");
-                tasks.add(new Task(id, title, description, status, userId));
+                Status status =  Status.valueOf(rs.getString("status"));
+                UUID ownerId  = (UUID) rs.getObject("user_id");
+                tasks.add(new Task(id, title, description, status, ownerId));
             }
         }catch (SQLException e){
                 throw  new RuntimeException("Ошибка при чтении задач", e);
