@@ -1,10 +1,13 @@
 package ru.steeldeezer.repository;
 import ru.steeldeezer.DatbaseManager.DatabaseManager;
+import ru.steeldeezer.model.Status;
 import ru.steeldeezer.model.Task;
+import ru.steeldeezer.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class TaskRepository {
     public void save(Task task){
@@ -24,5 +27,26 @@ public class TaskRepository {
         } catch (SQLException e){
             throw new RuntimeException("Ошибка сохранения таска в БД", e);
         }
+    }
+    public List<Task> findByUserId(User user){
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ?";
+
+        try(Connection conn = DatabaseManager.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)){
+
+            while (rs.next()){
+                UUID id = (UUID) rs.getObject("id");
+                String title = rs.getString("title");
+                String description = rs.getString("description");
+                Status status = (Status) rs.getObject("status");
+                UUID userId = (UUID) rs.getObject("user_id");
+                tasks.add(new Task(id, title, description, status, userId));
+            }
+        }catch (SQLException e){
+                throw  new RuntimeException("Ошибка при чтении задач", e);
+        }
+        return tasks;
     }
 }

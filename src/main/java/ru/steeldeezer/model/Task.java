@@ -15,6 +15,13 @@ public class Task {
         this.status = Status.NEW;
         this.userId = user.getUuid();
     }
+    public Task(UUID id, String title, String description, Status status, UUID userId){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.userId = userId;
+    }
 
 
     public String getDescription() {
